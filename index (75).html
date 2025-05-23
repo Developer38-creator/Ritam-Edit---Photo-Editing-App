@@ -1,0 +1,604 @@
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <title>
+   Rupam Edit - Photo Editing App
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab&amp;family=Roboto&amp;display=swap" rel="stylesheet"/>
+  <style>
+   body {
+      font-family: 'Roboto', sans-serif;
+    }
+  </style>
+ </head>
+ <body class="bg-gray-100 min-h-screen flex flex-col">
+  <header class="bg-white shadow-md">
+   <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+    <div class="flex items-center space-x-2">
+     <img alt="Rupam Edit logo, stylized letters RE in a modern design" class="w-10 h-10 rounded-md" height="40" src="https://storage.googleapis.com/a1aa/image/54e2470c-5097-4ea0-f9cb-819c0be941d4.jpg" width="40"/>
+     <h1 class="text-2xl font-['Roboto_Slab'] font-semibold text-gray-800">
+      Rupam Edit
+     </h1>
+    </div>
+    <nav class="hidden md:flex space-x-6 text-gray-700 font-medium">
+     <a class="hover:text-blue-600 transition" href="#upload">
+      Upload
+     </a>
+     <a class="hover:text-blue-600 transition" href="#filters">
+      Filters
+     </a>
+     <a class="hover:text-blue-600 transition" href="#adjustments">
+      Adjustments
+     </a>
+     <a class="hover:text-blue-600 transition" href="#extra-tools">
+      Extra Tools
+     </a>
+     <a class="hover:text-blue-600 transition" href="#photo-inhands">
+      Photo Inhands
+     </a>
+     <a class="hover:text-blue-600 transition" href="#export">
+      Export
+     </a>
+    </nav>
+    <button aria-label="Toggle menu" class="md:hidden text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600" id="menu-btn">
+     <i class="fas fa-bars fa-lg">
+     </i>
+    </button>
+   </div>
+   <nav class="hidden md:hidden bg-white border-t border-gray-200" id="mobile-menu">
+    <a class="block px-4 py-3 text-gray-700 hover:bg-gray-100 transition" href="#upload">
+     Upload
+    </a>
+    <a class="block px-4 py-3 text-gray-700 hover:bg-gray-100 transition" href="#filters">
+     Filters
+    </a>
+    <a class="block px-4 py-3 text-gray-700 hover:bg-gray-100 transition" href="#adjustments">
+     Adjustments
+    </a>
+    <a class="block px-4 py-3 text-gray-700 hover:bg-gray-100 transition" href="#extra-tools">
+     Extra Tools
+    </a>
+    <a class="block px-4 py-3 text-gray-700 hover:bg-gray-100 transition" href="#photo-inhands">
+     Photo Inhands
+    </a>
+    <a class="block px-4 py-3 text-gray-700 hover:bg-gray-100 transition" href="#export">
+     Export
+    </a>
+   </nav>
+  </header>
+  <main class="flex-grow container mx-auto px-4 py-8 max-w-6xl">
+   <section class="mb-12" id="upload">
+    <h2 class="text-3xl font-semibold text-gray-800 mb-6">
+     Upload Your Photo
+    </h2>
+    <div class="border-4 border-dashed border-gray-300 rounded-lg p-8 flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 transition" id="upload-area">
+     <i class="fas fa-cloud-upload-alt text-6xl text-gray-400 mb-4">
+     </i>
+     <p class="text-gray-600 mb-2">
+      Click or drag and drop an image here
+     </p>
+     <input accept="image/*" aria-label="Upload image file" class="hidden" id="file-input" type="file"/>
+    </div>
+    <p class="text-sm text-gray-500 mt-2">
+     Supported formats: JPG, PNG, GIF
+    </p>
+   </section>
+   <section class="mb-12 hidden" id="editor">
+    <h2 class="text-3xl font-semibold text-gray-800 mb-6">
+     Edit Your Photo
+    </h2>
+    <div class="flex flex-col md:flex-row md:space-x-8">
+     <div class="flex-1 mb-6 md:mb-0 flex justify-center items-center bg-white rounded-lg shadow-md p-4 relative overflow-hidden">
+      <img alt="Uploaded photo preview" class="max-w-full max-h-[450px] rounded-md" draggable="false" id="photo-preview" src=""/>
+      <canvas class="absolute top-0 left-0 w-full h-full pointer-events-none" id="drawing-canvas" style="display:none;"></canvas>
+     </div>
+     <div class="flex-1 bg-white rounded-lg shadow-md p-6 space-y-8 overflow-y-auto max-h-[600px]">
+      <div class="space-y-4" id="filters">
+       <h3 class="text-xl font-semibold text-gray-700">
+        Filters
+       </h3>
+       <div class="flex flex-wrap gap-4">
+        <button aria-pressed="true" class="filter-btn bg-gray-200 hover:bg-blue-500 hover:text-white rounded-md px-4 py-2 transition" data-filter="none">
+         None
+        </button>
+        <button aria-pressed="false" class="filter-btn bg-gray-200 hover:bg-blue-500 hover:text-white rounded-md px-4 py-2 transition" data-filter="grayscale(100%)">
+         Grayscale
+        </button>
+        <button aria-pressed="false" class="filter-btn bg-gray-200 hover:bg-blue-500 hover:text-white rounded-md px-4 py-2 transition" data-filter="sepia(100%)">
+         Sepia
+        </button>
+        <button aria-pressed="false" class="filter-btn bg-gray-200 hover:bg-blue-500 hover:text-white rounded-md px-4 py-2 transition" data-filter="invert(100%)">
+         Invert
+        </button>
+        <button aria-pressed="false" class="filter-btn bg-gray-200 hover:bg-blue-500 hover:text-white rounded-md px-4 py-2 transition" data-filter="blur(3px)">
+         Blur
+        </button>
+        <button aria-pressed="false" class="filter-btn bg-gray-200 hover:bg-blue-500 hover:text-white rounded-md px-4 py-2 transition" data-filter="contrast(150%)">
+         Contrast
+        </button>
+       </div>
+      </div>
+      <div class="space-y-4" id="adjustments">
+       <h3 class="text-xl font-semibold text-gray-700">
+        Adjustments
+       </h3>
+       <div class="space-y-4">
+        <div>
+         <label class="block text-gray-700 font-medium mb-1" for="brightness">
+          Brightness
+         </label>
+         <input aria-valuemax="200" aria-valuemin="0" aria-valuenow="100" class="w-full" id="brightness" max="200" min="0" type="range" value="100"/>
+        </div>
+        <div>
+         <label class="block text-gray-700 font-medium mb-1" for="saturation">
+          Saturation
+         </label>
+         <input aria-valuemax="200" aria-valuemin="0" aria-valuenow="100" class="w-full" id="saturation" max="200" min="0" type="range" value="100"/>
+        </div>
+        <div>
+         <label class="block text-gray-700 font-medium mb-1" for="hue">
+          Hue Rotate
+         </label>
+         <input aria-valuemax="360" aria-valuemin="0" aria-valuenow="0" class="w-full" id="hue" max="360" min="0" type="range" value="0"/>
+        </div>
+        <div>
+         <label class="block text-gray-700 font-medium mb-1" for="blur">
+          Blur
+         </label>
+         <input aria-valuemax="10" aria-valuemin="0" aria-valuenow="0" class="w-full" id="blur" max="10" min="0" step="0.1" type="range" value="0"/>
+        </div>
+       </div>
+      </div>
+      <div class="space-y-4" id="extra-tools">
+       <h3 class="text-xl font-semibold text-gray-700">
+        Extra Tools
+       </h3>
+       <div class="space-y-4">
+        <div>
+         <label class="block text-gray-700 font-medium mb-1" for="rotate">
+          Rotate (degrees)
+         </label>
+         <input aria-valuemax="360" aria-valuemin="0" aria-valuenow="0" class="w-full" id="rotate" max="360" min="0" type="range" value="0"/>
+        </div>
+        <div>
+         <label class="block text-gray-700 font-medium mb-1" for="flip-horizontal">
+          Flip Horizontal
+         </label>
+         <input aria-label="Flip image horizontally" class="cursor-pointer" id="flip-horizontal" type="checkbox"/>
+        </div>
+        <div>
+         <label class="block text-gray-700 font-medium mb-1" for="flip-vertical">
+          Flip Vertical
+         </label>
+         <input aria-label="Flip image vertically" class="cursor-pointer" id="flip-vertical" type="checkbox"/>
+        </div>
+        <div>
+         <label class="block text-gray-700 font-medium mb-1" for="opacity">
+          Opacity (%)
+         </label>
+         <input aria-valuemax="100" aria-valuemin="0" aria-valuenow="100" class="w-full" id="opacity" max="100" min="0" type="range" value="100"/>
+        </div>
+       </div>
+      </div>
+      <div class="space-y-4" id="photo-inhands">
+       <h3 class="text-xl font-semibold text-gray-700">
+        Photo Inhands Tool (Draw & Erase)
+       </h3>
+       <div class="flex flex-wrap gap-4 items-center">
+        <button class="tool-btn bg-gray-200 hover:bg-blue-500 hover:text-white rounded-md px-4 py-2 transition" data-tool="draw" aria-pressed="true" id="draw-tool">
+         <i class="fas fa-pencil-alt mr-2"></i>Draw
+        </button>
+        <button class="tool-btn bg-gray-200 hover:bg-blue-500 hover:text-white rounded-md px-4 py-2 transition" data-tool="erase" aria-pressed="false" id="erase-tool">
+         <i class="fas fa-eraser mr-2"></i>Erase
+        </button>
+        <button class="bg-red-500 hover:bg-red-600 text-white rounded-md px-4 py-2 transition" id="clear-canvas">
+         <i class="fas fa-trash-alt mr-2"></i>Clear Drawing
+        </button>
+       </div>
+       <div class="mt-4">
+        <label class="block text-gray-700 font-medium mb-1" for="brush-size">
+         Brush Size
+        </label>
+        <input aria-valuemax="50" aria-valuemin="1" aria-valuenow="5" class="w-full" id="brush-size" max="50" min="1" type="range" value="5"/>
+       </div>
+       <div class="mt-4">
+        <label class="block text-gray-700 font-medium mb-1" for="brush-color">
+         Brush Color
+        </label>
+        <input aria-label="Brush color picker" class="w-full h-10 p-0 border border-gray-300 rounded-md cursor-pointer" id="brush-color" type="color" value="#000000"/>
+       </div>
+      </div>
+      <div class="space-y-4" id="export">
+       <h3 class="text-xl font-semibold text-gray-700">
+        Export
+       </h3>
+       <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-md transition" id="download-btn">
+        <i class="fas fa-download mr-2">
+        </i>
+        Download Edited Photo
+       </button>
+      </div>
+     </div>
+    </div>
+   </section>
+  </main>
+  <footer class="bg-white border-t border-gray-300 py-6 mt-auto">
+   <div class="container mx-auto px-4 text-center text-gray-600 text-sm">
+    © 2024 Rupam Edit. All rights reserved.
+   </div>
+  </footer>
+  <script>
+   const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    const uploadArea = document.getElementById('upload-area');
+    const fileInput = document.getElementById('file-input');
+    const editorSection = document.getElementById('editor');
+    const photoPreview = document.getElementById('photo-preview');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const brightnessInput = document.getElementById('brightness');
+    const saturationInput = document.getElementById('saturation');
+    const hueInput = document.getElementById('hue');
+    const blurInput = document.getElementById('blur');
+    const downloadBtn = document.getElementById('download-btn');
+
+    // Extra tools
+    const rotateInput = document.getElementById('rotate');
+    const flipHorizontalInput = document.getElementById('flip-horizontal');
+    const flipVerticalInput = document.getElementById('flip-vertical');
+    const opacityInput = document.getElementById('opacity');
+
+    // Photo Inhands tool
+    const drawToolBtn = document.getElementById('draw-tool');
+    const eraseToolBtn = document.getElementById('erase-tool');
+    const clearCanvasBtn = document.getElementById('clear-canvas');
+    const brushSizeInput = document.getElementById('brush-size');
+    const brushColorInput = document.getElementById('brush-color');
+    const drawingCanvas = document.getElementById('drawing-canvas');
+    const ctx = drawingCanvas.getContext('2d');
+
+    let currentFilter = 'none';
+    let brightness = 100;
+    let saturation = 100;
+    let hue = 0;
+    let blur = 0;
+
+    let rotate = 0;
+    let flipH = false;
+    let flipV = false;
+    let opacity = 100;
+
+    let drawing = false;
+    let currentTool = 'draw';
+    let brushSize = 5;
+    let brushColor = '#000000';
+
+    function updateImageFilter() {
+      let filterString = `${currentFilter} brightness(${brightness}%) saturate(${saturation}%) hue-rotate(${hue}deg) blur(${blur}px)`;
+      photoPreview.style.filter = filterString;
+      photoPreview.style.opacity = opacity / 100;
+
+      let transformString = `rotate(${rotate}deg)`;
+      if (flipH) transformString += ' scaleX(-1)';
+      if (flipV) transformString += ' scaleY(-1)';
+      photoPreview.style.transform = transformString;
+    }
+
+    uploadArea.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.classList.add('border-blue-500');
+    });
+
+    uploadArea.addEventListener('dragleave', (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('border-blue-500');
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('border-blue-500');
+      const files = e.dataTransfer.files;
+      if (files.length) {
+        handleFile(files[0]);
+      }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length) {
+        handleFile(e.target.files[0]);
+      }
+    });
+
+    function handleFile(file) {
+      if (!file.type.startsWith('image/')) {
+        alert('Please upload a valid image file.');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        photoPreview.src = e.target.result;
+        photoPreview.alt = `Uploaded photo preview of ${file.name}`;
+        editorSection.classList.remove('hidden');
+        resetFilters();
+        resetCanvas();
+        setTimeout(() => {
+          resizeCanvas();
+        }, 50);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    filterButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        filterButtons.forEach((b) => {
+          b.classList.remove('bg-blue-500', 'text-white');
+          b.classList.add('bg-gray-200');
+          b.setAttribute('aria-pressed', 'false');
+        });
+        btn.classList.add('bg-blue-500', 'text-white');
+        btn.classList.remove('bg-gray-200');
+        btn.setAttribute('aria-pressed', 'true');
+        currentFilter = btn.dataset.filter;
+        updateImageFilter();
+      });
+    });
+
+    brightnessInput.addEventListener('input', (e) => {
+      brightness = e.target.value;
+      updateImageFilter();
+    });
+
+    saturationInput.addEventListener('input', (e) => {
+      saturation = e.target.value;
+      updateImageFilter();
+    });
+
+    hueInput.addEventListener('input', (e) => {
+      hue = e.target.value;
+      updateImageFilter();
+    });
+
+    blurInput.addEventListener('input', (e) => {
+      blur = e.target.value;
+      updateImageFilter();
+    });
+
+    rotateInput.addEventListener('input', (e) => {
+      rotate = e.target.value;
+      updateImageFilter();
+    });
+
+    flipHorizontalInput.addEventListener('change', (e) => {
+      flipH = e.target.checked;
+      updateImageFilter();
+    });
+
+    flipVerticalInput.addEventListener('change', (e) => {
+      flipV = e.target.checked;
+      updateImageFilter();
+    });
+
+    opacityInput.addEventListener('input', (e) => {
+      opacity = e.target.value;
+      updateImageFilter();
+    });
+
+    function resetFilters() {
+      currentFilter = 'none';
+      brightness = 100;
+      saturation = 100;
+      hue = 0;
+      blur = 0;
+      rotate = 0;
+      flipH = false;
+      flipV = false;
+      opacity = 100;
+
+      filterButtons.forEach((b) => {
+        if (b.dataset.filter === 'none') {
+          b.classList.add('bg-blue-500', 'text-white');
+          b.classList.remove('bg-gray-200');
+          b.setAttribute('aria-pressed', 'true');
+        } else {
+          b.classList.remove('bg-blue-500', 'text-white');
+          b.classList.add('bg-gray-200');
+          b.setAttribute('aria-pressed', 'false');
+        }
+      });
+
+      brightnessInput.value = 100;
+      saturationInput.value = 100;
+      hueInput.value = 0;
+      blurInput.value = 0;
+      rotateInput.value = 0;
+      flipHorizontalInput.checked = false;
+      flipVerticalInput.checked = false;
+      opacityInput.value = 100;
+
+      updateImageFilter();
+    }
+
+    // Drawing canvas setup and handlers
+    function resizeCanvas() {
+      const rect = photoPreview.getBoundingClientRect();
+      drawingCanvas.width = rect.width;
+      drawingCanvas.height = rect.height;
+      drawingCanvas.style.width = rect.width + 'px';
+      drawingCanvas.style.height = rect.height + 'px';
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.lineWidth = brushSize;
+      ctx.strokeStyle = brushColor;
+    }
+
+    function getPointerPos(e) {
+      const rect = drawingCanvas.getBoundingClientRect();
+      let clientX, clientY;
+      if (e.touches) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+      }
+      return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      };
+    }
+
+    function startDrawing(e) {
+      drawing = true;
+      const pos = getPointerPos(e);
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
+      e.preventDefault();
+    }
+
+    function draw(e) {
+      if (!drawing) return;
+      const pos = getPointerPos(e);
+      if (currentTool === 'draw') {
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.strokeStyle = brushColor;
+        ctx.lineWidth = brushSize;
+      } else if (currentTool === 'erase') {
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.lineWidth = brushSize * 2;
+      }
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+      e.preventDefault();
+    }
+
+    function stopDrawing(e) {
+      if (!drawing) return;
+      ctx.closePath();
+      drawing = false;
+      e.preventDefault();
+    }
+
+    function resetCanvas() {
+      ctx.clearRect(0, 0, drawingCanvas.width, drawingCanvas.height);
+      drawingCanvas.style.display = 'block';
+    }
+
+    drawToolBtn.addEventListener('click', () => {
+      currentTool = 'draw';
+      drawToolBtn.classList.add('bg-blue-500', 'text-white');
+      drawToolBtn.setAttribute('aria-pressed', 'true');
+      eraseToolBtn.classList.remove('bg-blue-500', 'text-white');
+      eraseToolBtn.setAttribute('aria-pressed', 'false');
+    });
+
+    eraseToolBtn.addEventListener('click', () => {
+      currentTool = 'erase';
+      eraseToolBtn.classList.add('bg-blue-500', 'text-white');
+      eraseToolBtn.setAttribute('aria-pressed', 'true');
+      drawToolBtn.classList.remove('bg-blue-500', 'text-white');
+      drawToolBtn.setAttribute('aria-pressed', 'false');
+    });
+
+    clearCanvasBtn.addEventListener('click', () => {
+      resetCanvas();
+    });
+
+    brushSizeInput.addEventListener('input', (e) => {
+      brushSize = e.target.value;
+      ctx.lineWidth = brushSize;
+    });
+
+    brushColorInput.addEventListener('input', (e) => {
+      brushColor = e.target.value;
+      ctx.strokeStyle = brushColor;
+    });
+
+    drawingCanvas.addEventListener('mousedown', startDrawing);
+    drawingCanvas.addEventListener('touchstart', startDrawing, {passive:false});
+    drawingCanvas.addEventListener('mousemove', draw);
+    drawingCanvas.addEventListener('touchmove', draw, {passive:false});
+    drawingCanvas.addEventListener('mouseup', stopDrawing);
+    drawingCanvas.addEventListener('touchend', stopDrawing);
+    drawingCanvas.addEventListener('mouseleave', stopDrawing);
+
+    // On window resize, resize canvas to match image
+    window.addEventListener('resize', () => {
+      if (!editorSection.classList.contains('hidden')) {
+        resizeCanvas();
+      }
+    });
+
+    downloadBtn.addEventListener('click', () => {
+      if (!photoPreview.src) return;
+
+      const canvas = document.createElement('canvas');
+      const img = photoPreview;
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctxExport = canvas.getContext('2d');
+
+      // Apply filters to canvas context
+      let filterString = `${currentFilter} brightness(${brightness}%) saturate(${saturation}%) hue-rotate(${hue}deg) blur(${blur}px)`;
+      ctxExport.filter = filterString;
+
+      // Save context state
+      ctxExport.save();
+
+      // Translate and rotate for rotation and flipping
+      ctxExport.translate(canvas.width / 2, canvas.height / 2);
+      ctxExport.rotate((rotate * Math.PI) / 180);
+      ctxExport.scale(flipH ? -1 : 1, flipV ? -1 : 1);
+      ctxExport.translate(-canvas.width / 2, -canvas.height / 2);
+
+      // Draw image with opacity
+      ctxExport.globalAlpha = opacity / 100;
+      ctxExport.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      // Restore context state
+      ctxExport.restore();
+
+      // Draw the user drawing scaled to canvas size
+      if (drawingCanvas.width && drawingCanvas.height) {
+        // Create a temporary canvas to scale drawingCanvas content
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = drawingCanvas.width;
+        tempCanvas.height = drawingCanvas.height;
+        const tempCtx = tempCanvas.getContext('2d');
+        tempCtx.drawImage(drawingCanvas, 0, 0);
+
+        // Calculate scale factors from displayed image to natural image size
+        const displayedWidth = photoPreview.getBoundingClientRect().width;
+        const displayedHeight = photoPreview.getBoundingClientRect().height;
+        const scaleX = canvas.width / displayedWidth;
+        const scaleY = canvas.height / displayedHeight;
+
+        // Draw scaled drawing on export canvas
+        ctxExport.drawImage(tempCanvas, 0, 0, drawingCanvas.width, drawingCanvas.height, 0, 0, canvas.width, canvas.height);
+      }
+
+      canvas.toBlob((blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'rupam-edit-photo.png';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }, 'image/png');
+    });
+  </script>
+ </body>
+</html>
